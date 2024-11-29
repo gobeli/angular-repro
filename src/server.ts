@@ -1,5 +1,5 @@
 import { APP_BASE_HREF } from '@angular/common';
-import { CommonEngine, isMainModule } from '@angular/ssr/node';
+import { CommonEngine, createNodeRequestHandler, isMainModule } from '@angular/ssr/node';
 import express from 'express';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,6 +23,11 @@ const commonEngine = new CommonEngine();
  * });
  * ```
  */
+
+app.get('/api/**', (req, res) => {
+  console.log('API CALLED', req.originalUrl);
+  res.end(JSON.stringify({ status: 'success' }));
+});
 
 /**
  * Serve static files from /browser
@@ -63,3 +68,5 @@ if (isMainModule(import.meta.url)) {
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }
+
+export const reqHandler = createNodeRequestHandler(app);
